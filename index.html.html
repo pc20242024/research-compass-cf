@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chancellor Institute — Research Compass</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Mono:wght@300;400&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #0e0d0b; --paper: #ffffff; --cream: #f5f5f5;
+    --gold: #b8943a; --gold-light: #d4af62; --gold-pale: #f0e4c0;
+    --muted: #6b6455; --border: rgba(14,13,11,0.12); --card-bg: #fafafa;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Outfit', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── HEADER ── */
+  header {
+    padding: 2rem 3rem 0;
+    display: flex;
+    align-items: baseline;
+    gap: 1.2rem;
+  }
+
+  .logo-mark {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink);
+    opacity: 0.9;
+  }
+
+  .logo-sep { width: 1px; height: 18px; background: var(--border); display: inline-block; vertical-align: middle; }
+
+  .logo-sub {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  /* ── COMPASS HERO ── */
+  .compass-hero {
+    padding: 3rem 3rem 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .compass-wrap {
+    width: 120px; height: 120px;
+    margin-bottom: 1.6rem;
+    animation: compassEntry 0.9s cubic-bezier(0.2, 0, 0.3, 1) both;
+  }
+
+  @keyframes compassEntry {
+    from { opacity: 0; transform: rotate(-20deg) scale(0.85); }
+    to   { opacity: 1; transform: rotate(0deg) scale(1); }
+  }
+
+  .compass-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .compass-eyebrow::before,
+  .compass-eyebrow::after {
+    content: '';
+    width: 20px; height: 1px;
+    background: var(--gold);
+    display: inline-block;
+  }
+
+  h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.8rem, 6vw, 4.8rem);
+    font-weight: 300;
+    line-height: 1.07;
+    letter-spacing: -0.01em;
+    margin-bottom: 1rem;
+  }
+
+  h1 em { font-style: italic; color: var(--gold); }
+
+  .hero-desc {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--muted);
+    max-width: 520px;
+    font-weight: 300;
+  }
+
+  /* ── LAYOUT ── */
+  .divider { border: none; border-top: 1px solid var(--border); margin: 0 3rem; }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    text-transform: uppercase;
+    padding: 2rem 3rem 1.2rem;
+  }
+
+  /* ── SECTOR GRID ── */
+  .sectors {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 0;
+    border-top: 1px solid var(--border);
+    border-left: 1px solid var(--border);
+    margin: 0 3rem;
+  }
+
+  .sector-card {
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 1.5rem 1.6rem;
+    cursor: pointer;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    background: var(--card-bg);
+    transition: background 0.18s;
+    user-select: none;
+  }
+
+  .sector-card:hover { background: var(--cream); }
+  .sector-card.selected { background: var(--ink); }
+  .sector-card.selected .sector-num { color: var(--gold-light); }
+  .sector-card.selected .sector-name { color: var(--paper); }
+
+  .sector-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--gold);
+    letter-spacing: 0.1em;
+    margin-top: 0.3rem;
+    min-width: 22px;
+    flex-shrink: 0;
+  }
+
+  .sector-icon { font-size: 1.3rem; line-height: 1; flex-shrink: 0; }
+
+  .sector-name {
+    font-size: 0.88rem;
+    font-weight: 400;
+    line-height: 1.35;
+    color: var(--ink);
+  }
+
+  .sector-card.selected .sector-name { color: var(--paper); }
+
+  /* ── KEYWORD PANEL ── */
+  #kwPanel {
+    display: none;
+    margin: 0 3rem;
+    border: 1px solid var(--border);
+    border-top: none;
+    background: var(--card-bg);
+    padding: 1.8rem 2rem 1.4rem;
+    animation: fadeDown 0.3s ease;
+  }
+
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .kw-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.18em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+  }
+
+  .kw-label-num { color: var(--gold); }
+  .kw-label-opt { font-size: 0.55rem; letter-spacing: 0.08em; opacity: 0.7; }
+
+  .kw-input-row {
+    display: flex;
+    border: 1px solid var(--border);
+    background: var(--paper);
+    margin-bottom: 1.2rem;
+    transition: border-color 0.2s;
+  }
+
+  .kw-input-row:focus-within { border-color: var(--gold); }
+
+  #kwInput {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 0.75rem 1rem;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 300;
+    color: var(--ink);
+    outline: none;
+    min-width: 0;
+  }
+
+  #kwInput::placeholder { color: var(--muted); opacity: 0.55; }
+
+  .kw-add {
+    background: none;
+    border: none;
+    border-left: 1px solid var(--border);
+    padding: 0 1.1rem;
+    cursor: pointer;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    color: var(--gold);
+    text-transform: uppercase;
+    white-space: nowrap;
+    transition: background 0.15s;
+  }
+
+  .kw-add:hover { background: var(--gold-pale); }
+
+  .kw-suggest-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.14em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 0.65rem;
+  }
+
+  .kw-chips { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-bottom: 1rem; }
+
+  .kw-chip {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.75rem;
+    border: 1px solid var(--border);
+    background: var(--paper);
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+  }
+
+  .kw-chip:hover { border-color: var(--gold); color: var(--gold); background: var(--gold-pale); }
+  .kw-chip.active { background: var(--ink); color: var(--gold-light); border-color: var(--ink); }
+
+  .kw-active-area { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+
+  .kw-active-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.5rem 0.3rem 0.8rem;
+  }
+
+  .kw-remove {
+    background: none;
+    border: none;
+    color: var(--gold-light);
+    cursor: pointer;
+    font-size: 0.85rem;
+    line-height: 1;
+    padding: 0;
+    display: flex;
+    align-items: center;
+  }
+
+  .kw-remove:hover { color: var(--paper); }
+
+  /* ── ACTION BAR ── */
+  .action-bar {
+    padding: 2rem 3rem;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .selected-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  .selected-label span { color: var(--ink); font-weight: 400; }
+
+  .btn-generate {
+    background: var(--ink);
+    color: var(--paper);
+    border: none;
+    padding: 0.85rem 2.2rem;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: opacity 0.2s;
+  }
+
+  .btn-generate::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--gold);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+    z-index: 0;
+  }
+
+  .btn-generate:hover:not(:disabled)::after { transform: scaleX(1); }
+  .btn-generate span { position: relative; z-index: 1; }
+  .btn-generate:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  /* ── RESULTS ── */
+  #results { margin: 0 3rem 4rem; display: none; }
+
+  .results-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+
+  .results-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.9rem;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--ink);
+    flex: 1;
+  }
+
+  .results-sector-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    color: var(--gold);
+    text-transform: uppercase;
+    border: 1px solid var(--gold-pale);
+    padding: 0.3rem 0.7rem;
+    background: var(--gold-pale);
+  }
+
+  .btn-regen {
+    background: none;
+    border: 1px solid var(--border);
+    padding: 0.45rem 1rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    transition: all 0.2s;
+  }
+
+  .btn-regen:hover { border-color: var(--gold); color: var(--gold); background: var(--gold-pale); }
+  .regen-icon { display: inline-block; transition: transform 0.5s; }
+  .btn-regen:hover .regen-icon { transform: rotate(180deg); }
+
+  .kw-used-row { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1.4rem; }
+
+  .kw-used-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.25rem 0.6rem;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    background: var(--gold-pale);
+  }
+
+  .thesis-list { display: flex; flex-direction: column; gap: 1.5rem; }
+
+  .thesis-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    padding: 2rem 2.2rem;
+    animation: slideUp 0.4s ease both;
+  }
+
+  .thesis-card:nth-child(1){animation-delay:.05s}
+  .thesis-card:nth-child(2){animation-delay:.12s}
+  .thesis-card:nth-child(3){animation-delay:.19s}
+  .thesis-card:nth-child(4){animation-delay:.26s}
+  .thesis-card:nth-child(5){animation-delay:.33s}
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .thesis-number {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--gold);
+    letter-spacing: 0.15em;
+    margin-bottom: 0.7rem;
+    display: block;
+  }
+
+  .thesis-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.25rem;
+    font-weight: 500;
+    line-height: 1.4;
+    color: var(--ink);
+    margin-bottom: 0.8rem;
+  }
+
+  .thesis-desc {
+    font-size: 0.84rem;
+    line-height: 1.65;
+    color: var(--muted);
+    font-weight: 300;
+    margin-bottom: 1rem;
+  }
+
+  .thesis-meta { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+
+  .tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.25rem 0.6rem;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    background: var(--paper);
+  }
+
+  /* ── LOADING ── */
+  .loading-ring {
+    display: none;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 2rem 3rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  .ring {
+    width: 20px; height: 20px;
+    border: 1.5px solid var(--border);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .error-box {
+    display: none;
+    margin: 0 3rem 2rem;
+    padding: 1.2rem 1.6rem;
+    border: 1px solid #c0392b33;
+    background: #c0392b08;
+    font-size: 0.82rem;
+    color: #922b21;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.04em;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 1.5rem 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  footer p {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  .footer-gold { width: 8px; height: 8px; background: var(--gold); display: inline-block; margin-right: 0.5rem; }
+
+  /* ── ZOOM CTA ── */
+  .zoom-cta {
+    margin: 2rem 3rem 1rem;
+    background: var(--ink);
+    border-radius: 6px;
+    padding: 1.4rem 1.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.2rem;
+    flex-wrap: wrap;
+  }
+
+  .zoom-cta-text p:first-child {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    font-weight: 400;
+    color: #ffffff;
+    margin-bottom: 0.25rem;
+  }
+
+  .zoom-cta-text p:last-child {
+    font-size: 0.72rem;
+    color: rgba(255,255,255,0.5);
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.06em;
+  }
+
+  .zoom-cta-btn {
+    background: var(--gold);
+    color: #ffffff;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 5px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+    transition: background 0.2s;
+  }
+
+  .zoom-cta-btn:hover { background: #9e7020; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 640px) {
+    .compass-hero, .section-label, .action-bar, #results, .loading-ring, .error-box, .divider, .zoom-cta { padding-left: 1.2rem; padding-right: 1.2rem; margin-left: 0; margin-right: 0; }
+    h1 { font-size: 2.4rem; }
+    .sectors { margin: 0; grid-template-columns: 1fr; }
+    #kwPanel { margin: 0; }
+    footer { padding: 1.2rem; }
+    .zoom-cta { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<section class="compass-hero">
+  <div class="compass-wrap">
+    <svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <circle cx="60" cy="60" r="57" fill="none" stroke="#b8943a" stroke-width="1.5" opacity=".3"/>
+      <circle cx="60" cy="60" r="48" fill="#ffffff" stroke="#b8943a" stroke-width="1" opacity=".45"/>
+      <line x1="60" y1="12" x2="60" y2="20" stroke="#b8943a" stroke-width="2" stroke-linecap="round"/>
+      <line x1="60" y1="100" x2="60" y2="108" stroke="#b8943a" stroke-width="2" stroke-linecap="round"/>
+      <line x1="12" y1="60" x2="20" y2="60" stroke="#b8943a" stroke-width="2" stroke-linecap="round"/>
+      <line x1="100" y1="60" x2="108" y2="60" stroke="#b8943a" stroke-width="2" stroke-linecap="round"/>
+      <line x1="83.3" y1="16.6" x2="80.2" y2="21.9" stroke="#b8943a" stroke-width=".9" stroke-linecap="round" opacity=".5"/>
+      <line x1="103.4" y1="36.7" x2="98.1" y2="39.8" stroke="#b8943a" stroke-width=".9" stroke-linecap="round" opacity=".5"/>
+      <line x1="103.4" y1="83.3" x2="98.1" y2="80.2" stroke="#b8943a" stroke-width=".9" stroke-linecap="round" opacity=".5"/>
+      <line x1="83.3" y1="103.4" x2="80.2" y2="98.1" stroke="#b8943a" stroke-width=".9" stroke-linecap="round" opacity=".5"/>
+      <line x1="36.7" y1="103.4" x2="39.8" y2="98.1" stroke="#b8943a" stroke-width=".9" stroke-linecap="round" opacity=".5"/>
+      <line x1="16.6" y1="83.3" x2="21.9" y2="80.2" stroke="#b8943a" stroke-width=".9" stroke-linecap="round" opacity=".5"/>
+      <line x1="16.6" y1="36.7" x2="21.9" y2="39.8" stroke="#b8943a" stroke-width=".9" stroke-linecap="round" opacity=".5"/>
+      <line x1="36.7" y1="16.6" x2="39.8" y2="21.9" stroke="#b8943a" stroke-width=".9" stroke-linecap="round" opacity=".5"/>
+      <text x="60" y="30" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace" font-size="10" fill="#b8943a" font-weight="400" letter-spacing=".05em">N</text>
+      <text x="60" y="93" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace" font-size="10" fill="#b8943a" opacity=".45">S</text>
+      <text x="95" y="60.5" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace" font-size="10" fill="#b8943a" opacity=".45">E</text>
+      <text x="25" y="60.5" text-anchor="middle" dominant-baseline="central" font-family="'DM Mono',monospace" font-size="10" fill="#b8943a" opacity=".45">W</text>
+      <polygon points="60,35 55.5,62 60,57 64.5,62" fill="#b8943a"/>
+      <polygon points="60,85 55.5,58 60,63 64.5,58" fill="#0e0d0b" opacity=".3"/>
+      <circle cx="60" cy="60" r="4" fill="#b8943a"/>
+      <circle cx="60" cy="60" r="1.8" fill="#ffffff"/>
+    </svg>
+  </div>
+  <p class="compass-eyebrow">Chancellor Institute</p>
+  <h1>Research <em>Compass</em></h1>
+  <p class="hero-desc">Select an industry sector to generate original, supervisor-ready PhD thesis ideas at the intersection of <em style="font-style:italic;color:var(--gold)">leadership</em> and your field — grounded in contemporary theory and real knowledge gaps.</p>
+</section>
+
+<hr class="divider">
+<p class="section-label">01 — Choose your sector</p>
+<div class="sectors" id="sectorGrid"></div>
+
+<div id="kwPanel">
+  <p class="kw-label">
+    <span class="kw-label-num">02</span>
+    — Refine with keywords
+    <span class="kw-label-opt">(optional)</span>
+  </p>
+  <div class="kw-input-row">
+    <input type="text" id="kwInput" placeholder="Type a keyword and press Enter — e.g. remote leadership, gender equity…" autocomplete="off">
+    <button class="kw-add" id="kwAddBtn">+ Add</button>
+  </div>
+  <p class="kw-suggest-label">Suggested for this sector</p>
+  <div class="kw-chips" id="kwChips"></div>
+  <div class="kw-active-area" id="kwActive"></div>
+</div>
+
+<div class="action-bar">
+  <p class="selected-label" id="selLabel">No sector selected</p>
+  <button class="btn-generate" id="genBtn" disabled onclick="generate()">
+    <span>Find research directions</span>
+  </button>
+</div>
+
+<hr class="divider">
+<div class="loading-ring" id="loading">
+  <div class="ring"></div>
+  <span id="loadingText">Searching for research directions…</span>
+</div>
+<div class="error-box" id="errorBox"></div>
+<div id="results"></div>
+
+<div class="zoom-cta" id="zoomCta" style="display:none">
+  <div class="zoom-cta-text">
+    <p>Interested in the PhD? Talk to our coordinator.</p>
+    <p>Book a free Zoom call · No obligation</p>
+  </div>
+  <a href="https://chancellor.education/contact/" target="_blank" class="zoom-cta-btn">
+    📅 Book a Zoom Chat
+  </a>
+</div>
+
+<footer>
+  <p><span class="footer-gold"></span>Chancellor Institute · Research Compass</p>
+  <p>Ideas are AI-generated prompts for discussion with a supervisor</p>
+</footer>
+
+<script>
+const SECTORS = [
+  { icon:'⬡', name:'AI & New Technologies', kws:['AI ethics','digital transformation','algorithmic bias','automation','tech governance','machine learning','data strategy','innovation leadership'] },
+  { icon:'⛏', name:'Mining & Energy', kws:['just transition','decarbonisation','safety culture','ESG','remote operations','energy security','unionisation','stakeholder engagement'] },
+  { icon:'🌾', name:'Agriculture, Forestry & Fishing', kws:['food security','sustainability','rural leadership','climate adaptation','agri-tech','cooperative governance','supply chain','land rights'] },
+  { icon:'⚙', name:'Manufacturing & Industrial Production', kws:['lean management','Industry 4.0','workforce reskilling','supply chain resilience','quality culture','automation','safety leadership','reshoring'] },
+  { icon:'🏗', name:'Construction & Infrastructure', kws:['project governance','safety culture','megaproject leadership','BIM adoption','diversity & inclusion','subcontractor relations','sustainability','risk management'] },
+  { icon:'🛍', name:'Retail & Wholesale Trade', kws:['omnichannel','customer experience','frontline leadership','e-commerce disruption','supply chain','workforce turnover','ESG','purpose-driven brands'] },
+  { icon:'🚢', name:'Transport, Logistics & Supply Chain', kws:['supply chain resilience','last-mile delivery','decarbonisation','digitalisation','crisis leadership','gig economy','port management','autonomous vehicles'] },
+  { icon:'💼', name:'Professional & Financial Services', kws:['ESG investing','regulatory compliance','fintech disruption','inclusive leadership','talent retention','remote work','risk culture','ethics'] },
+  { icon:'🏥', name:'Healthcare & Life Sciences', kws:['clinical governance','staff wellbeing','NHS leadership','patient safety','digital health','interdisciplinary teams','crisis management','workforce retention'] },
+  { icon:'🎓', name:'Education & Training', kws:['distributed leadership','decolonising curriculum','EdTech','teacher wellbeing','equity & inclusion','higher education governance','widening participation','lifelong learning'] },
+  { icon:'📡', name:'Media & Communication', kws:['trust & misinformation','newsroom leadership','AI-generated content','editorial independence','audience engagement','diversity in media','platform governance','journalism ethics'] },
+  { icon:'✈', name:'Hospitality, Tourism & Leisure', kws:['sustainable tourism','service leadership','post-pandemic recovery','seasonal workforce','overtourism','customer experience','cultural sensitivity','gig workers'] },
+  { icon:'🎭', name:'Arts, Culture & Creative Industries', kws:['creative leadership','funding & austerity','diversity & representation','digital arts','community engagement','intellectual property','freelance workforce','cultural policy'] },
+  { icon:'🤝', name:'Nonprofit, NGO & Social Services', kws:['mission-driven leadership','volunteer management','donor engagement','social impact','fundraising strategy','board governance','community development','advocacy'] },
+  { icon:'🏛', name:'Government & Public Administration', kws:['public sector reform','policy implementation','stakeholder engagement','digital government','inter-agency collaboration','public trust','accountability','crisis management'] },
+];
+
+let selected = null;
+let selectedIndex = null;
+let activeKeywords = new Set();
+let isRegen = false;
+
+// Build sector grid
+const grid = document.getElementById('sectorGrid');
+SECTORS.forEach((s, i) => {
+  const card = document.createElement('div');
+  card.className = 'sector-card';
+  card.innerHTML = `
+    <span class="sector-num">${String(i+1).padStart(2,'0')}</span>
+    <span class="sector-icon" aria-hidden="true">${s.icon}</span>
+    <span class="sector-name">${s.name}</span>
+  `;
+  card.addEventListener('click', () => selectSector(i, card));
+  grid.appendChild(card);
+});
+
+function selectSector(index, card) {
+  document.querySelectorAll('.sector-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  selected = SECTORS[index].name;
+  selectedIndex = index;
+  document.getElementById('selLabel').innerHTML = `Selected: <span>${selected}</span>`;
+  document.getElementById('genBtn').disabled = false;
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('errorBox').style.display = 'none';
+  isRegen = false;
+  activeKeywords.clear();
+  renderActiveKeywords();
+  document.getElementById('kwInput').value = '';
+  buildSuggestions(index);
+  const panel = document.getElementById('kwPanel');
+  panel.style.display = 'none';
+  requestAnimationFrame(() => { panel.style.display = 'block'; });
+}
+
+function buildSuggestions(index) {
+  const chips = document.getElementById('kwChips');
+  chips.innerHTML = '';
+  SECTORS[index].kws.forEach(kw => {
+    const chip = document.createElement('span');
+    chip.className = 'kw-chip';
+    chip.textContent = kw;
+    chip.onclick = () => toggleChip(kw, chip);
+    chips.appendChild(chip);
+  });
+}
+
+function toggleChip(kw, el) {
+  if (activeKeywords.has(kw)) { activeKeywords.delete(kw); el.classList.remove('active'); }
+  else { activeKeywords.add(kw); el.classList.add('active'); }
+  renderActiveKeywords();
+}
+
+function addKwFromInput() {
+  const input = document.getElementById('kwInput');
+  const val = input.value.trim();
+  if (!val) return;
+  activeKeywords.add(val);
+  renderActiveKeywords();
+  input.value = '';
+  input.focus();
+}
+
+document.getElementById('kwAddBtn').addEventListener('click', addKwFromInput);
+document.getElementById('kwInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') { e.preventDefault(); addKwFromInput(); }
+});
+
+function removeKeyword(kw) {
+  activeKeywords.delete(kw);
+  document.querySelectorAll('.kw-chip').forEach(chip => {
+    if (chip.textContent === kw) chip.classList.remove('active');
+  });
+  renderActiveKeywords();
+}
+
+function renderActiveKeywords() {
+  const area = document.getElementById('kwActive');
+  area.innerHTML = '';
+  activeKeywords.forEach(kw => {
+    const safe = kw.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+    const tag = document.createElement('span');
+    tag.className = 'kw-active-tag';
+    tag.innerHTML = `${kw}<button class="kw-remove" onclick="removeKeyword('${safe}')">&#x2715;</button>`;
+    area.appendChild(tag);
+  });
+}
+
+async function generate() {
+  if (!selected) return;
+
+  // Auto-add any text still in the keyword input field
+  const kwInput = document.getElementById('kwInput');
+  if (kwInput && kwInput.value.trim()) {
+    activeKeywords.add(kwInput.value.trim());
+    renderActiveKeywords();
+    kwInput.value = '';
+  }
+
+  const resultsEl = document.getElementById('results');
+  const loadingEl = document.getElementById('loading');
+  const errorEl   = document.getElementById('errorBox');
+  const btn       = document.getElementById('genBtn');
+
+  resultsEl.style.display = 'none';
+  errorEl.style.display   = 'none';
+  loadingEl.style.display = 'flex';
+  document.getElementById('loadingText').textContent = isRegen ? 'Finding new directions…' : 'Searching for research directions…';
+  btn.disabled = true;
+
+  const kwList = [...activeKeywords];
+
+  try {
+    // Calls our own server — API key never leaves the backend
+    const res = await fetch('/api/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        sector:   selected,
+        keywords: kwList,
+        isRegen:  isRegen,
+      }),
+    });
+
+    const data = await res.json();
+    if (!res.ok || data.error) throw new Error(data.error || `Error ${res.status}`);
+
+    renderResults(data, kwList);
+    isRegen = true;
+
+  } catch (err) {
+    errorEl.textContent = `Error: ${err.message}. Please try again.`;
+    errorEl.style.display = 'block';
+  } finally {
+    loadingEl.style.display = 'none';
+    btn.disabled = false;
+  }
+}
+
+function renderResults(data, kwList) {
+  const el = document.getElementById('results');
+
+  const kwRow = kwList.length > 0
+    ? `<div class="kw-used-row">${kwList.map(k => `<span class="kw-used-badge">&#x25C6; ${k}</span>`).join('')}</div>`
+    : '';
+
+  let html = `
+    <div class="results-header">
+      <h2 class="results-title">Research directions for your review</h2>
+      <span class="results-sector-tag">${data.sector}</span>
+      <button class="btn-regen" id="regenBtn"><span class="regen-icon">&#x21BB;</span> Regenerate</button>
+    </div>
+    ${kwRow}
+    <div class="thesis-list">
+  `;
+
+  data.theses.forEach((t, i) => {
+    const num  = String(i + 1).padStart(2, '0');
+    const tags = [t.methodology, ...t.keywords].map(k => `<span class="tag">${k}</span>`).join('');
+    html += `
+      <div class="thesis-card">
+        <span class="thesis-number">Thesis ${num}</span>
+        <h3 class="thesis-title">${t.title}</h3>
+        <p class="thesis-desc">${t.description}</p>
+        <div class="thesis-meta">${tags}</div>
+      </div>
+    `;
+  });
+
+  html += `</div>`;
+  el.innerHTML = html;
+  el.style.display = 'block';
+  document.getElementById('zoomCta').style.display = 'flex';
+  document.getElementById('regenBtn').addEventListener('click', generate);
+  setTimeout(() => {
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    sendHeight();
+  }, 100);
+}
+
+// ── AUTO-RESIZE: sends page height to parent WordPress page ──
+function sendHeight() {
+  const height = document.body.scrollHeight;
+  if (window.parent && window.parent !== window) {
+    window.parent.postMessage(
+      { type: 'rc-height', height: height },
+      '*'
+    );
+  }
+}
+
+// Send height on load and whenever content changes
+window.addEventListener('load', sendHeight);
+window.addEventListener('resize', sendHeight);
+
+const observer = new MutationObserver(sendHeight);
+observer.observe(document.body, { childList: true, subtree: true, attributes: true });
+</script>
+</body>
+</html>
